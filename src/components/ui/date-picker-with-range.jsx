@@ -2,14 +2,14 @@ import * as React from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { cn } from "../../lib/utils";
+import { Button } from "./button";
+import { Calendar } from "./calendar";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+
+const Popover = PopoverPrimitive.Root;
+const PopoverTrigger = PopoverPrimitive.Trigger;
+const PopoverContent = PopoverPrimitive.Content;
 
 export default function DatePickerWithRange({ className }) {
   const [date, setDate] = React.useState({

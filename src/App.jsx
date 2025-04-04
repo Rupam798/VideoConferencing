@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useRoutes } from "react-router-dom";
 import routes from "tempo-routes";
 import Dashboard from "./components/Dashboard";
-import MeetingLobby from "./components/MeetingLobby";
+import MeetingLobby from "./components/meeting/MeetingLobby";
 import AuthPage from "./components/auth/AuthPage";
 import LandingPage from "./components/LandingPage";
 

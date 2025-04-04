@@ -14,7 +14,7 @@ import {
 import { Alert, AlertDescription } from "../ui/alert";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 
-const SignUpForm = ({ onSuccess, onLoginClick }) => {
+const Register = ({ onSuccess, onLoginClick }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -158,4 +158,4 @@ const SignUpForm = ({ onSuccess, onLoginClick }) => {
   );
 };
 
-export default SignUpForm;
+export default Register;

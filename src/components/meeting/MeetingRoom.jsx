@@ -42,6 +42,42 @@ const MeetingRoom = ({ meetingId, onLeaveCall, initialSettings }) => {
     initialVideoEnabled: isCameraOn,
   });
 
+  // Debug logging for WebRTC state
+  useEffect(() => {
+    console.log("WebRTC state:", {
+      localStream: !!localStream,
+      participantsCount: participants.length,
+      error: webRTCError,
+      isInitializing,
+      isMicOn: webRTCMicOn,
+      isCameraOn: webRTCCameraOn,
+    });
+
+    if (webRTCError) {
+      console.error("WebRTC Error:", webRTCError);
+    }
+
+    if (localStream) {
+      console.log("Local stream tracks:", {
+        audioTracks: localStream.getAudioTracks().length,
+        videoTracks: localStream.getVideoTracks().length,
+        audioEnabled: localStream
+          .getAudioTracks()
+          .some((track) => track.enabled),
+        videoEnabled: localStream
+          .getVideoTracks()
+          .some((track) => track.enabled),
+      });
+    }
+  }, [
+    localStream,
+    participants,
+    webRTCError,
+    isInitializing,
+    webRTCMicOn,
+    webRTCCameraOn,
+  ]);
+
   useEffect(() => {
     // Get user from localStorage if not provided in initialSettings
     if (!userName) {
@@ -54,16 +90,48 @@ const MeetingRoom = ({ meetingId, onLeaveCall, initialSettings }) => {
   }, [userName]);
 
   // Convert WebRTC participants to the format expected by our components
-  const formattedParticipants = participants.map((p) => ({
-    id: p.id,
-    name: p.isCurrentUser ? `${p.name || "You"} (You)` : p.name,
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.id}`,
-    isHost: p.isCurrentUser,
-    isMuted: !p.audioEnabled,
-    isVideoOff: !p.videoEnabled,
-    streamId: p.id,
-    stream: p.stream,
-  }));
+  const formattedParticipants = participants.map((p) => {
+    // Debug logging for participant streams
+    if (p.isCurrentUser) {
+      console.log("Current user stream details:", {
+        id: p.id,
+        hasStream: !!p.stream,
+        videoTracks: p.stream ? p.stream.getVideoTracks().length : 0,
+        audioTracks: p.stream ? p.stream.getAudioTracks().length : 0,
+        videoEnabled: p.videoEnabled,
+        audioEnabled: p.audioEnabled,
+      });
+    }
+
+    return {
+      id: p.id,
+      name: p.isCurrentUser ? `${p.name || "You"} (You)` : p.name,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.id}`,
+      isHost: p.isCurrentUser,
+      isMuted: !p.audioEnabled,
+      isVideoOff: !p.videoEnabled,
+      streamId: p.id,
+      stream: p.stream,
+      isCurrentUser: p.isCurrentUser,
+      videoEnabled: p.videoEnabled,
+      audioEnabled: p.audioEnabled,
+    };
+  });
+
+  // For demo purposes, ensure we have at least one participant
+  if (formattedParticipants.length === 0) {
+    formattedParticipants.push({
+      id: "demo-user",
+      name: "You (Demo)",
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=demo`,
+      isHost: true,
+      isMuted: !isMicOn,
+      isVideoOff: !isCameraOn,
+      streamId: "demo-user",
+      stream: localStream,
+      isCurrentUser: true,
+    });
+  }
 
   const handleToggleMic = () => {
     setIsMicOn(!isMicOn);
@@ -76,8 +144,10 @@ const MeetingRoom = ({ meetingId, onLeaveCall, initialSettings }) => {
   };
 
   const handleToggleScreenShare = async () => {
-    toggleScreenShare();
-    setIsScreenSharing(!isScreenSharing);
+    const success = await toggleScreenShare();
+    if (success) {
+      setIsScreenSharing(!isScreenSharing);
+    }
   };
 
   const handleToggleChat = () => {

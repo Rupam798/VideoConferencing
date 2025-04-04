@@ -12,7 +12,7 @@ import {
 import { Clock, History, Video } from "lucide-react";
 import CreateMeetingCard from "./CreateMeetingCard";
 import JoinMeetingCard from "./JoinMeetingCard";
-import Header from "./Header";
+import Header from "./layout/Header";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);

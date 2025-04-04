@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { LogOut, User, Video } from "lucide-react";
-import StyleToggle from "./StyleToggle";
+import StyleToggle from "./common/StyleToggle";
 
 const Header = () => {
   const [user, setUser] = useState(null);
